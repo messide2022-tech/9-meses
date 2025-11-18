@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Quebra-cabeça do Amor ❤️</title>
+<style>
+    body {
+        background: #ffdde9;
+        margin: 0;
+        font-family: Arial;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 10px;
+    }
+
+    h1 {
+        color: #d4006e;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    #game {
+        width: 300px;
+        height: 450px;
+        position: relative;
+        border: 3px solid #ff5ca8;
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .peca {
+        width: 100px;
+        height: 150px;
+        background-image: url("foto.jpg");
+        background-size: 300px 450px;
+        border: 1px solid #ffc4dd;
+        box-sizing: border-box;
+        touch-action: none;
+        position: absolute;
+    }
+
+    #mensagemFinal {
+        display: none;
+        margin-top: 20px;
+        padding: 18px;
+        background: white;
+        border-radius: 14px;
+        text-align: center;
+        font-size: 20px;
+        width: 85%;
+        max-width: 350px;
+        box-shadow: 0px 0px 12px #ff6fa9;
+    }
+</style>
+</head>
+<body>
+
+<h1>Quebra-cabeça do Amor ❤️</h1>
+
+<div id="game"></div>
+
+<div id="mensagemFinal">
+    ❤️ Feliz 9 meses, meu amor!
+Hoje a gente completa mais um capítulo da nossa história, e eu juro que cada dia ao seu lado vale mais do que eu consigo colocar em palavras. Você trouxe leveza, risadas, calmaria e aquele tipo de amor que a gente sente no peito sem precisar explicar.
+
+Obrigado por cada detalhe, cada abraço demorado, cada conversa boba, cada cuidado que você tem comigo. Eu sou muito feliz por dividir a vida com você, por te ter como parceira, por saber que posso contar com você em qualquer momento.
+
+Que venham muitos outros meses, anos, e tudo o que a vida tiver pra gente.
+Eu te amo hoje, amanhã e depois. ❤️
+</div>
+
+<script>
+const game = document.getElementById("game");
+const finalMsg = document.getElementById("mensagemFinal");
+
+let pecas = [];
+let corretas = 0;
+
+// Cria as peças do quebra-cabeça
+let index = 0;
+for (let y = 0; y < 3; y++) {
+    for (let x = 0; x < 3; x++) {
+        let p = document.createElement("div");
+        p.className = "peca";
+        p.style.backgroundPosition = `-${x * 100}px -${y * 150}px`;
+
+        p.dataset.corretoX = x * 100;
+        p.dataset.corretoY = y * 150;
+
+        // posição embaralhada
+        let posX = Math.floor(Math.random() * 3) * 100;
+        let posY = Math.floor(Math.random() * 3) * 150;
+
+        p.style.left = posX + "px";
+        p.style.top = posY + "px";
+
+        // Arrastar com o dedo
+        let offsetX, offsetY;
+
+        p.addEventListener("touchstart", (e) => {
+            const touch = e.touches[0];
+            offsetX = touch.clientX - p.offsetLeft;
+            offsetY = touch.clientY - p.offsetTop;
+        });
+
+        p.addEventListener("touchmove", (e) => {
+            const touch = e.touches[0];
+            p.style.left = (touch.clientX - offsetX) + "px";
+            p.style.top = (touch.clientY - offsetY) + "px";
+        });
+
+        p.addEventListener("touchend", () => {
+            snap(p);
+        });
+
+        pecas.push(p);
+        game.appendChild(p);
+        index++;
+    }
+}
+
+// Fazer a peça encaixar automaticamente se estiver perto
+function snap(p) {
+    const x = parseInt(p.style.left);
+    const y = parseInt(p.style.top);
+
+    const cx = parseInt(p.dataset.corretoX);
+    const cy = parseInt(p.dataset.corretoY);
+
+    // Se estiver perto suficiente, encaixa no lugar certo
+    if (Math.abs(x - cx) < 30 && Math.abs(y - cy) < 30) {
+        p.style.left = cx + "px";
+        p.style.top = cy + "px";
+
+        p.dataset.ok = "true";
+    }
+
+    verificar();
+}
+
+// Verifica se todas as peças estão no lugar
+function verificar() {
+    let certas = 0;
+    pecas.forEach(p => {
+        if (p.dataset.ok === "true") certas++;
+    });
+
+    if (certas === 9) {
+        finalMsg.style.display = "block";
+    }
+}
+</script>
+</body>
+</html>
